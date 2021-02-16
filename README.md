@@ -1,17 +1,17 @@
 # PredSynRNA
 Prediction of synaptically localized RNAs in human neurons using developmental brain gene expression data<br />
 # Requirements
-Python 3
-argparse
-pandas
-numpy
-sklearn
-keras
-tensorflow
-xgboost
-joblib
-scipy
-hyperopt
+Python 3<br />
+argparse<br />
+pandas<br />
+numpy<br />
+sklearn<br />
+keras<br />
+tensorflow<br />
+xgboost<br />
+joblib<br />
+scipy<br />
+hyperopt<br />
 # Model training and evaluation
 Different machine learning algorithms, including logistic regression (LR), random forest (RF), support vector machine (SVM), XGBoost classifier (XGB), and artificial neural networks (ANNs), have been used for model training and evaluation. Under the "data" folder, the **training.csv** was used during the parameter tuning and tenfold-cross validation. The **test.csv** was used to evaluate the model performance on a independent test. 
 To evaluate the performances of LR, RF, SVM, and XGB models, the following command line can be used:<br />
