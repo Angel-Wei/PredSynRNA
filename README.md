@@ -13,12 +13,6 @@ xgboost<br />
 joblib<br />
 scipy<br />
 hyperopt<br />
-# Model training and evaluation
-Different machine learning algorithms, including logistic regression (LR), random forest (RF), support vector machine (SVM), XGBoost classifier (XGB), and artificial neural networks (ANNs), have been used for model training and evaluation. Under the "data" folder, the **training.csv** was used during the parameter tuning and tenfold cross-validation. The **test.csv** was used to evaluate the model performance on an independent test. 
-To train and evaluate the performances of the LR, RF, SVM, and XGB models, the following command line can be used:<br /><br />
-`python ml.py -t data/training.csv -i data/test.csv -p <path>`<br /><br />
-To train and evaluate the ANN model, the following command line can be used:<br /><br />
-`python ann.py -t data/training.csv -i data/test.csv -p <path>`<br /><br />
 # Prediction and prioritization of candidate human RNAs localized to synapses
 The **prediction_data.csv** contains over 7,000 brain-expressed RNAs which were not included in the training set. To predict and prioritize candidate human RNAs localized to synapses, the SVM, RF, and ANN models under "models" folder will be loaded. The following command line can be used:<br /><br />
 `python prediction.py -t data/training.csv -f data/prediction_data.csv -s SVM.model -a ANN.hdf5 -r RF.model -p <path>`<br /><br />
