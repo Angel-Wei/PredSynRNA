@@ -5,14 +5,10 @@ Python 3<br />
 argparse<br />
 pandas<br />
 numpy<br />
-matplotlib<br />
 sklearn<br />
 keras<br />
 tensorflow<br />
-xgboost<br />
 joblib<br />
-scipy<br />
-hyperopt<br />
 # Prediction and prioritization of candidate human RNAs localized to synapses
 The **prediction_data.csv** contains over 7,000 brain-expressed RNAs which were not included in the training set. To predict and prioritize candidate human RNAs localized to synapses, the SVM, RF, and ANN models under "models" folder will be loaded. The following command line can be used:<br /><br />
 `python prediction.py -t data/training.csv -f data/prediction_data.csv -s SVM.model -a ANN.hdf5 -r RF.model -p <path>`<br /><br />
