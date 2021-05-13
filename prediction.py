@@ -58,7 +58,7 @@ def roc_auc(y_true, y_pred):
 def get_train_exp_data(file):
     full = pd.read_csv(file)
     full = shuffle(full, random_state = 42)
-    x_exp = full.drop(columns = ['ensembl_gene_id', 'gene_symbol', 'utr5', 'utr3', 'label']).reset_index(drop = True)
+    x_exp = full.iloc[:, 2:526].reset_index(drop = True)
     # log2(RPKM + 1) transformation
     x_exp = round(np.log2(x_exp + 1), 2)
     x_exp = np.array(x_exp)   
@@ -67,13 +67,13 @@ def get_train_exp_data(file):
 def get_pred_exp_data(file):
     full = pd.read_csv(file)
     full = shuffle(full, random_state = 42)
-    x_exp = full.drop(columns = ['ensembl_gene_id', 'gene_symbol', 'utr5', 'utr3']).reset_index(drop = True)
+    x_exp = full.iloc[:, 2:526].reset_index(drop = True)
     # log2(RPKM + 1) transformation
     x_exp = round(np.log2(x_exp + 1), 2)
     x_exp = np.array(x_exp)   
     return x_exp
 
-def prediction(svm, rf, ann, to_be_predicted, genes, path):
+def prediction(svm, rf, ann, to_be_predicted, info, path):
     svm_predicted = svm.predict(to_be_predicted)
     svm_count = 0
     for item in svm_predicted:
@@ -99,32 +99,38 @@ def prediction(svm, rf, ann, to_be_predicted, genes, path):
     # svm: sort the probabilities in descending order and stored the instances predicted as positive
     svm_proba = svm.predict_proba(to_be_predicted)
     g1 = []
+    i1 = []
     p1 = []
     for j in range(0, len(svm_proba)):
-        g1.append(genes[j])
+        g1.append(info[j][0])
+        i1.append(info[j][1])
         p1.append(svm_proba[j][1])
-    df1 = pd.DataFrame(list(zip(g1, p1)), columns =['name', 'predict_proba']) 
+    df1 = pd.DataFrame(list(zip(i1, g1, p1)), columns =['gene_id', 'gene_symbol', 'predict_proba']) 
     df1.sort_values(by=['predict_proba'],ascending=False, inplace=True)
 
     # rf: sort the probabilities in descending order and stored the instances predicted as positive
     rf_proba = rf.predict_proba(to_be_predicted)
     g2 = []
+    i2 = []
     p2 = []
     for j in range(0, len(rf_proba)):
-        g2.append(genes[j])
+        g2.append(info[j][0])
+        i2.append(info[j][1])
         p2.append(rf_proba[j][1])
-    df2 = pd.DataFrame(list(zip(g2, p2)), columns =['name', 'predict_proba'])
+    df2 = pd.DataFrame(list(zip(i2, g2, p2)), columns =['gene_id', 'gene_symbol', 'predict_proba'])
     df2.sort_values(by=['predict_proba'],ascending=False, inplace=True)
 
 
     # ann: sort the probabilities in descending order and stored the instances predicted as positive
     ann_proba = [x[0] for x in ann.predict(to_be_predicted)]
     g3 = []
+    i3 = []
     p3 = []
     for j in range(0, len(ann_proba)):
-        g3.append(genes[j])
+        g3.append(info[j][0])
+        i3.append(info[j][1])
         p3.append(ann_proba[j])
-    df3 = pd.DataFrame(list(zip(g3, p3)), columns =['name', 'predict_proba'])
+    df3 = pd.DataFrame(list(zip(i3, g3, p3)), columns =['gene_id', 'gene_symbol', 'predict_proba'])
     df3.sort_values(by=['predict_proba'],ascending=False, inplace=True)
 
     # write the prioritization results to a single file
@@ -135,13 +141,20 @@ def prediction(svm, rf, ann, to_be_predicted, genes, path):
     df3.head(ann_count).to_excel(writer, sheet_name='ann_proba_positive', index = False)
     writer.save()
     
+    print ("Writting whole prioritization results...")
+    writer2 = pd.ExcelWriter(path + "full_prioritization_result.xlsx", engine='xlsxwriter')
+    df1.to_excel(writer2, sheet_name='svm_proba_positive', index = False)
+    df2.to_excel(writer2, sheet_name='rf_proba_positive', index = False)
+    df3.to_excel(writer2, sheet_name='ann_proba_positive', index = False)
+    writer2.save()
+    
 def main():
     trainingfile, predfile, svmfile, rffile, annfile, path = getparas()
     full_data = pd.read_csv(predfile)
     full_data = shuffle(full_data, random_state = 42)
-    genes = []
+    info = []
     for index, row in full_data.iterrows():
-        genes.append(row['gene_symbol'])
+        info.append((row['gene_symbol'], row['ensembl_gene_id']))
     scaler = MinMaxScaler()
     scaler.fit_transform(get_train_exp_data(trainingfile))
     to_be_predicted = scaler.transform(get_pred_exp_data(predfile))
@@ -151,9 +164,7 @@ def main():
     svm = joblib.load(svmfile)
     rf = joblib.load(rffile)
     ann = load_model(annfile, custom_objects = dependencies)
-    
     # prediction, prioritization, and writing results
-    prediction(svm, rf, ann, to_be_predicted, genes, path)  
+    prediction(svm, rf, ann, to_be_predicted, info, path)  
 if __name__ == '__main__':
         main()
-
