@@ -183,6 +183,9 @@ def cv(X_train, Y_train, random_state, fileout):
     model = get_ANN_model(best)
     cv_acc,cv_spe,cv_sen,cv_str,cv_mcc,cv_f1,cv_auc = [],[],[],[],[],[],[] 
     cv_preds, cv_probs = [],[]
+    save_path = file_path + "synapse_" + name + "_" + feature_set + ".hdf5"
+    checkpointer = ModelCheckpoint(filepath = save_path, verbose = 1, save_best_only = True)
+    earlystopper = EarlyStopping(monitor='val_loss', patience = 5, verbose = 1)
     kf = model_selection.KFold(n_splits = 10, shuffle = True, random_state = seed)
     for train_index, test_index in kf.split(X_train):
         X_cv_train, X_cv_test = X_train[train_index,:], X_train[test_index,:]
@@ -193,9 +196,6 @@ def cv(X_train, Y_train, random_state, fileout):
         # bootstrap resampling of the sub-training data
         print ("Start bootstrap to get the balanced training dataset in each validation during 10-fold.")
         X, Y = resampling(X_subtrain, Y_subtrain)
-        save_path = file_path + "synapse_" + name + "_" + feature_set + ".hdf5"
-        checkpointer = ModelCheckpoint(filepath = save_path, verbose = 1, save_best_only = True)
-        earlystopper = EarlyStopping(monitor='val_loss', patience = 5, verbose = 1)
         model.fit(X, Y, batch_size=2**int(best['batch_size']), epochs=100, shuffle=True, validation_data=(X_subval,Y_subval), callbacks=[checkpointer, earlystopper])
         
         predictions = model.predict(X_cv_test)
@@ -220,6 +220,11 @@ def cv(X_train, Y_train, random_state, fileout):
     fileout.write("MCC_mean: "+str(np.mean(cv_mcc)) + "\n")
     fileout.write("Fscore_mean: "+str(np.mean(cv_f1)) + "\n")
     fileout.write("AUC_mean: "+str(np.mean(cv_auc)) + "\n\n\n")
+    
+    x_train, x_val, y_train, y_val = train_test_split(X_train, Y_train, test_size = 0.1, random_state = 42)
+    x_train, y_train = resampling(x_train, y_train)
+    model.fit(x_train, y_train, batch_size=2**int(best['batch_size']), epochs=100, shuffle=True, validation_data=(x_val,y_val), callbacks=[checkpointer, earlystopper])
+
     return cv_preds, cv_probs, model
 
 def deep_learning(X_train,Y_train,random_state,fileout):
