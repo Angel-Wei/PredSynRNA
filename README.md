@@ -11,7 +11,7 @@ tensorflow<br />
 joblib<br />
 ## Prediction and prioritization of candidate human RNAs localized to synapses
 The **mRNA_prediction_data.csv** contains over 7,000 brain-expressed RNAs and the **lncRNA_prediction_data.csv** contains over 3,000 brain-expressed lncRNAs which were not included in the training set. To predict and prioritize candidate human RNAs localized to synapses, the SVM, RF, and ANN models will be loaded. For example, for the prediction and prioritization of candidate human mRNAs localized to synapses, the following command line can be used:<br /><br />
-`python prediction.py -t data/training.csv -f data/mRNA_prediction_data.csv -s SVM.model -r RF.model -a ANN.hdf5 -p <path>`<br /><br />
+`python prediction.py -t data/training_dataset.csv -f data/mRNA_prediction_data.csv -s SVM.model -r RF.model -a ANN.hdf5 -p <path>`<br /><br />
 An output file (.xlsx) that includes the RNAs predicted as positive (dendritically localized) by each model with computed probability scores will be generated. The prediction results are stored in separate sheets. For example, in the sheet of "svm_proba_positive":<br />
 | gene_id | name  | predict_proba |
 | ------------- | ------------- | ------------- |
