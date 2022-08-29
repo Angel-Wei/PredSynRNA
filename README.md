@@ -4,6 +4,7 @@ For details of this work, users can refer to our paper [**"Prediction of Synapti
 <p align="center">
 <img width="350" src="https://www.mdpi.com/genes/genes-13-01488/article_deploy/html/images/genes-13-01488-g001.png">
 </p>
+
 ## Requirements
 Python 3<br />
 argparse<br />
