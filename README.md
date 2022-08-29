@@ -1,7 +1,7 @@
 ## PredSynRNA
 In this study, we developed a new machine learning method, PredSynRNA, to predict the synaptic localization of human RNAs. The PredSynRNA models utilized developmental brain gene expression data as features to achieve relatively high performance during cross-validations and on an independent test dataset. PredSynRNA models were then applied to the prediction and prioritization of candidate RNAs localized to human synapses. <br />
 For details of this work, users can refer to our paper **"Prediction of Synaptically Localized RNAs in Human Neurons Using Developmental Brain Gene Expression Data "** published in *Genes* (Wei and Wang, 2022).<br />
-![alt text](https://www.mdpi.com/genes/genes-13-01488/article_deploy/html/images/genes-13-01488-g001.png | width=200)
+<img src="https://www.mdpi.com/genes/genes-13-01488/article_deploy/html/images/genes-13-01488-g001.png" width="200">
 ## Requirements
 Python 3<br />
 argparse<br />
